@@ -11,7 +11,7 @@ exports.handler = async function (event) {
     const email = String(data.email || "").trim();
     const password = String(data.password || "");
     
-    if (!email || ! password) {
+    if (!email || !password) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: "Email is required." })
